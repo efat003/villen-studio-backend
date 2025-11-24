@@ -9,14 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection - UPDATED VERSION
+// MongoDB Connection - UPDATED with your Atlas connection
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/fashionbd';
+    // Replace <db_password> with your actual password
+    const mongoURI = process.env.MONGODB_URI || "mongodb+srv://efat:your_password_here@cluster0.iul51jg.mongodb.net/fashionbd?retryWrites=true&w=majority&appName=Cluster0";
     
     await mongoose.connect(mongoURI);
-    console.log('🔥 MongoDB Connected Successfully');
+    console.log('🔥 MongoDB Connected Successfully to Atlas');
     console.log(`📊 Database: ${mongoose.connection.db.databaseName}`);
+    console.log(`📍 Cluster: Cluster0.iul51jg.mongodb.net`);
   } catch (error) {
     console.log('❌ MongoDB Connection Error:', error.message);
     console.log('🔄 Using in-memory database as fallback');
@@ -46,7 +48,7 @@ let dashboardData = {
 app.get('/', (req, res) => {
   res.json({ 
     message: 'FashionBD Backend Server Running!',
-    database: mongoose.connection.readyState === 1 ? 'MongoDB Connected' : 'In-memory',
+    database: mongoose.connection.readyState === 1 ? 'MongoDB Atlas Connected' : 'In-memory',
     timestamp: new Date().toISOString()
   });
 });
@@ -55,14 +57,14 @@ app.get('/', (req, res) => {
 app.get('/api/test', (req, res) => {
   res.json({ 
     message: 'FashionBD Backend Server Running!',
-    database: mongoose.connection.readyState === 1 ? 'MongoDB Connected' : 'In-memory',
+    database: mongoose.connection.readyState === 1 ? 'MongoDB Atlas Connected' : 'In-memory',
     timestamp: new Date().toISOString()
   });
 });
 
 // Health check
 app.get('/api/health', (req, res) => {
-  const dbStatus = mongoose.connection.readyState === 1 ? 'MongoDB Connected' : 'In-memory (Testing)';
+  const dbStatus = mongoose.connection.readyState === 1 ? 'MongoDB Atlas Connected' : 'In-memory (Testing)';
   
   res.json({ 
     status: 'OK',
@@ -74,12 +76,10 @@ app.get('/api/health', (req, res) => {
 
 // Admin Dashboard
 app.get('/api/admin/dashboard', (req, res) => {
-  // If MongoDB is connected, fetch real data here
-  // Currently using temporary data
   res.json({
     success: true,
     data: dashboardData,
-    database: mongoose.connection.readyState === 1 ? 'mongodb' : 'memory'
+    database: mongoose.connection.readyState === 1 ? 'mongodb-atlas' : 'memory'
   });
 });
 
@@ -94,5 +94,5 @@ app.listen(PORT, () => {
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`📊 Admin Dashboard: http://localhost:${PORT}/api/admin/dashboard`);
   console.log(`❤️ Health Check: http://localhost:${PORT}/api/health`);
-  console.log(`🔄 Database: ${mongoose.connection.readyState === 1 ? 'MongoDB' : 'In-memory'}`);
+  console.log(`🔄 Database: ${mongoose.connection.readyState === 1 ? 'MongoDB Atlas' : 'In-memory'}`);
 });
