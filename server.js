@@ -5,11 +5,22 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS Configuration - UPDATED with your frontend URL
+const corsOptions = {
+  origin: [
+    'https://villenstudio.onrender.com', // Your production frontend
+    'http://localhost:3000',              // Create React App dev server
+    'http://localhost:5173',              // Vite dev server
+    'http://127.0.0.1:3000'               // Alternative localhost
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// MongoDB Connection - OPTIMIZED
+// MongoDB Connection
 const connectDB = async () => {
   try {
     console.log('🔗 Connecting to MongoDB Atlas...');
@@ -77,7 +88,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Admin Dashboard
+// Admin Dashboard (Current - using temporary data)
 app.get('/api/admin/dashboard', (req, res) => {
   const dashboardData = {
     totalProducts: 2,
@@ -102,6 +113,46 @@ app.get('/api/admin/dashboard', (req, res) => {
     mongodb_connected: mongoose.connection.readyState === 1
   });
 });
+
+// Future routes - Commented out until you create MongoDB collections
+/*
+app.get('/api/admin/orders', (req, res) => {
+  // Return real orders from MongoDB
+});
+
+app.get('/api/admin/customers', (req, res) => {
+  // Return real customers from MongoDB
+});
+
+app.post('/api/admin/products', (req, res) => {
+  // Create new products in MongoDB
+});
+
+// Example with real MongoDB - Replace the current dashboard when ready
+app.get('/api/admin/dashboard-real', async (req, res) => {
+  try {
+    const db = mongoose.connection.db;
+    const totalProducts = await db.collection('products').countDocuments();
+    const totalOrders = await db.collection('orders').countDocuments();
+    const totalCustomers = await db.collection('customers').countDocuments();
+    
+    // Return real data from MongoDB
+    res.json({
+      success: true,
+      data: {
+        totalProducts,
+        totalOrders,
+        totalCustomers,
+        totalRevenue: 0, // Calculate from orders
+        recentOrders: [], // Get from orders collection
+        stats: {} // Calculate from data
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+*/
 
 const PORT = process.env.PORT || 5000;
 
