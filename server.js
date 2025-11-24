@@ -9,13 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
+// MongoDB Connection - UPDATED VERSION
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/fashionbd', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/fashionbd';
+    
+    await mongoose.connect(mongoURI);
     console.log('🔥 MongoDB Connected Successfully');
     console.log(`📊 Database: ${mongoose.connection.db.databaseName}`);
   } catch (error) {
